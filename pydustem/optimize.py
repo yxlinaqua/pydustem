@@ -9,8 +9,8 @@ from math import log10
 import numpy as np
 import scipy.optimize
 import scipy.interpolate
-import irc
-import irc.dustem as dust
+import run
+import grainmodel
 
 def counter(start=1):
     i = start
@@ -57,7 +57,7 @@ def fitting_mass(bands, values, grain_composition, cache,
         for k, v in variables.items():
             if v: grain_input[k].mass *= x[v+i-1]
         
-        x, y = dust.calc_sed(grain_input, cache=cache, msg='running DUSTEM... '+str(cnt.next()))
+        x, y = run.calc_sed(grain_input, cache=cache, msg='running DUSTEM... '+str(cnt.next()))
         res = adjust_sed(bands, x, y)
 
 #        print (np.log10(ans/res)**2).sum(), np.log10(ans/res)     
@@ -114,13 +114,12 @@ def display_fitting_result(): pass
 
 def adjust_sed(bands, x, y):
     if isinstance(bands[0], str):
-        return irc.filters.weighted_mean(bands, x, y)
+        return filter.weighted_mean(bands, x, y)
     else:
         tck = scipy.interpolate.splrep(x, y)
         return scipy.interpolate.splev(bands, tck)
 
 if __name__ == '__main__':
-    import run
     cache = {}
 
 #    bands = ['S11', 'S7', 'L15', 'L24', 'M70', 'M160']
@@ -135,7 +134,7 @@ if __name__ == '__main__':
     values /= 6e21
     print bands, values
     
-    grain_composition = dust.MC10(g0=10.0, gamma=0.01, alpha=2.0, umax=1e6,
+    grain_composition = grainmodel.MC10(g0=10.0, gamma=0.01, alpha=2.0, umax=1e6,
                                   factor={'PAH0':1.0,'PAH1':1.0,'SamC':5.0,'LamC':1.0,'aSil':1.0})
 #    grain_composition = dust.MC10(g0=1.0, gamma=0.01)
     var_g0 = True

@@ -9,7 +9,7 @@ import os
 import sys
 import copy
 from collections import OrderedDict
-from math import sqrt, log10
+from math import log10
 import numpy as np
 
 DUSTEM_DIR = '/home/tnakamura/workspace/dustem3.8_web/'
@@ -104,23 +104,3 @@ def read_output(filename, skiprows=0, xcol=0, ycol=-1, unpack=True, reverse=Fals
 def read_output_raw(filename, skiprows=0, unpack=False):
     return np.loadtxt(filename, skiprows=skiprows, unpack=unpack)
 
-
-if __name__ == '__main__':
-    import grain
-    import pickle
-    cache = {}
-#    f = open('cache.txt')
-#    cache = pickle.load(f)
-#    f.close()
-    
-    dust0 = grain.MC10(gamma=0.0, g0=1)
-    x, y0 = calc_sed(dust0)
-    dust1 = grain.MC10(gamma=0.005, g0=1)
-    x, y = calc_sed(dust1, du=0.5, cache=cache)
-    dust2 = grain.MC10(gamma=0.02, g0=1)
-    x, y2 = calc_sed(dust2, cache=cache)
-    np.savetxt('test.dat', np.transpose(np.array([x, y0, y, y2])))
-    
-    f = open('cache.txt', 'w')
-    pickle.dump(cache, f)
-    f.close()
