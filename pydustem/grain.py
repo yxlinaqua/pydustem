@@ -2,13 +2,7 @@
 
 import copy
 from collections import OrderedDict
-
-DEFAULT_UMAX = 1e6
-DEFAULT_GAMMA = 0.0
-DEFAULT_ALPHA = 2.0
-MASS_MIN = 1e-15
-G0_MIN = 0.0001
-G0_MAX = 1e10
+from config import DEFAULT_UMAX, DEFAULT_GAMMA, DEFAULT_ALPHA, MASS_MIN, G0_MIN, G0_MAX
 
 class Grain(object):
     '''Class for Grain'''

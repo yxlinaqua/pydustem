@@ -6,13 +6,7 @@ import copy
 from collections import OrderedDict
 from math import log10
 import numpy as np
-
-DUSTEM_DIR = '/home/tnakamura/workspace/dustem3.8_web/'
-OUT_DIR = os.path.join(DUSTEM_DIR, 'out')
-RES_FILE = os.path.join(OUT_DIR, 'SED.RES')
-GRAIN = os.path.join(DUSTEM_DIR, 'data/GRAIN.DAT')
-DUSTEM = os.path.join(DUSTEM_DIR, 'src/dustem')
-RES_HEADER = 8 # lines
+from config import RES_FILE, GRAIN, DUSTEM, RES_HEADER
 
 def run_dustem(grain_composition, output='SED', msg=None, silent=True):
     if not msg: msg = 'running DUSTEM...'
