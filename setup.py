@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 version = '0.1'
 
 setup(
-    name='qseries',
+    name='pydustem',
     version=version,
     description="DustEM wrapper for Python",
     long_description="""\
@@ -21,7 +21,6 @@ setup(
     ],
     entry_points = {
         'console_scripts' : [
-#            'q_reduction = qseries.max38.console_scripts:q_reduction',
         ],
     },
     test_suite='nose.collector',

@@ -7,7 +7,7 @@ def test_MC10():
     with open(MC10_REF) as f:
         names = f.readline().split()
     grain_composition = grainmodel.MC10()
-    result = run.calc_single_sed(grain_composition, readraw=True)
+    result = run.calc_sed(grain_composition, readraw=True)
     answer = np.loadtxt(MC10_REF,skiprows=1)
     for i, name in enumerate(names):
         assert ((result[name]-answer[:,i]).sum()<1e-15).all()
@@ -17,7 +17,7 @@ def test_DL07():
     with open(DL07_REF) as f:
         names = f.readline().split()
     grain_composition = grainmodel.DL07()
-    result = run.calc_single_sed(grain_composition, readraw=True)
+    result = run.calc_sed(grain_composition, readraw=True)
     answer = np.loadtxt(DL07_REF,skiprows=1)
     for i, name in enumerate(names):
         assert ((result[name]-answer[:,i]).sum()<1e-15).all()

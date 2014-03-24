@@ -1,9 +1,4 @@
 #-*- coding: utf-8 -*-
-'''
-Created on Dec 3, 2012
-
-@author: tnakamura
-'''
 
 import os
 import sys
@@ -18,7 +13,7 @@ RES_FILE = os.path.join(OUT_DIR, 'SED.RES')
 GRAIN = os.path.join(DUSTEM_DIR, 'data/GRAIN.DAT')
 DUSTEM = os.path.join(DUSTEM_DIR, 'src/dustem')
 RES_HEADER = 8 # lines
-    
+
 def run_dustem(grain_composition, output='SED', msg=None, silent=True):
     if not msg: msg = 'running DUSTEM...'
     grain_composition.correct_params()

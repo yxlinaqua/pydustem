@@ -1,9 +1,4 @@
 #-*- coding: utf-8 -*-
-'''
-Created on Dec 4, 2012
-
-@author: tnakamura
-'''
 
 from math import log10
 import numpy as np
@@ -149,7 +144,7 @@ if __name__ == '__main__':
                          variables=variables, absolute=True)
 
 #    x, y = run.calc_sed(newgc, cache=cache)
-#    np.savetxt('test.dat', np.transpose(np.array([x, y])))
+#    np.savetxt('test.dat', np.transpose(np.array([x, y])))https://github.com/dpforest/pydustem
 
     res = run.calc_sed(newgc, cache=cache, readraw=True)
     np.savetxt('test.dat', np.transpose(np.vstack((res['lambda'], res['PAH0']+res['PAH1'], res['SamC'], res['LamC']+res['aSil'], res['Total']))))
