@@ -14,9 +14,10 @@ import numpy as np
 
 DUSTEM_DIR = '/home/tnakamura/workspace/dustem3.8_web/'
 OUT_DIR = os.path.join(DUSTEM_DIR, 'out')
+RES_FILE = os.path.join(OUT_DIR, 'SED.RES')
 GRAIN = os.path.join(DUSTEM_DIR, 'data/GRAIN.DAT')
 DUSTEM = os.path.join(DUSTEM_DIR, 'src/dustem')
-
+RES_HEADER = 8 # lines
     
 def run_dustem(grain_composition, output='SED', msg=None, silent=True):
     if not msg: msg = 'running DUSTEM...'
@@ -60,8 +61,7 @@ def calc_sed(gc, du=0.5, msg=None, silent=True, readraw=False, cache=None):
 
 def calc_single_sed(gc, msg=None, silent=True, readraw=True):
     run_dustem(gc, output='SED', msg=msg, silent=silent)
-    output = os.path.join(OUT_DIR, 'SED.RES')
-    ary = read_output_raw(output, skiprows=8, unpack=True)
+    ary = read_output_raw(RES_FILE, skiprows=RES_HEADER, unpack=True)
     ylist = ['lambda'] + gc.grains.keys() + ['Total']
     res = OrderedDict(zip(ylist, ary[:]))
 
