@@ -5,7 +5,6 @@ import numpy as np
 import scipy.optimize
 import scipy.interpolate
 import run
-import grainmodel
 
 def counter(start=1):
     i = start
@@ -55,7 +54,6 @@ def fitting_mass(bands, values, grain_composition, cache,
         x, y = run.calc_sed(grain_input, cache=cache, msg='running DUSTEM... '+str(cnt.next()))
         res = adjust_sed(bands, x, y)
 
-#        print (np.log10(ans/res)**2).sum(), np.log10(ans/res)     
         diff = ((ans-res)**2/ans).sum()/ans[0]
         print diff
         return diff
@@ -69,12 +67,7 @@ def fitting_mass(bands, values, grain_composition, cache,
     if var_gamma: bounds.append((0,1./grain_composition.gamma))
     if var_umax: bounds.append(tuple(np.array([4,10])-log10(grain_composition.umax)))
     if var_alpha: bounds.append((1.01/grain_composition.alpha,4./grain_composition.alpha))
-#    x = scipy.optimize.leastsq(func, x0, epsfcn=0.001)[0]
-#    x = scipy.optimize.fmin_cobyla(func, x0, [lambda x, i=i: x[i] for i in xrange(len(x0))])
-#    x = scipy.optimize.fmin_l_bfgs_b(func, x0, epsilon=1e-4, approx_grad=True,
-#                                     bounds=bounds+[(1e-5,100)]*gnum)[0]
-#    x = scipy.optimize.fmin_tnc(func, x0, epsilon=1e-4, approx_grad=True, maxfun=500,
-#                                bounds=bounds+[(1e-5,100)]*gnum)
+
     x = scipy.optimize.fmin_slsqp(func, x0, bounds=bounds+[(1e-5,100)]*gnum, epsilon=1e-5)
 
     newgc = grain_composition.copy()
@@ -113,38 +106,3 @@ def adjust_sed(bands, x, y):
     else:
         tck = scipy.interpolate.splrep(x, y)
         return scipy.interpolate.splev(bands, tck)
-
-if __name__ == '__main__':
-    cache = {}
-
-#    bands = ['S11', 'S7', 'L15', 'L24', 'M70', 'M160']
-#    values = np.array([0.369/11., 0.390/7., 0.619/15., 1.349/24., 10.3/70., 11.5/160.])
-#    values /= 6e21
-
-    aryS = np.loadtxt('/home/tnakamura/analysis/NGC2782/Spitzer-IRS/SL.dat')
-    aryL = np.loadtxt('/home/tnakamura/analysis/NGC2782/Spitzer-IRS/LL.dat')
-    aryM = np.loadtxt('/home/tnakamura/analysis/NGC2782/Spitzer-IRS/MIPS.dat')
-    bands = np.r_[aryS[:,0],aryL[:,0],aryM[:,0]]
-    values = np.r_[aryS[:,1]/aryS[:,0]/1.1,aryL[:,1]/aryL[:,0]/1.1,aryM[:,1]/aryM[:,0]]
-    values /= 6e21
-    print bands, values
-    
-    grain_composition = grainmodel.MC10(g0=10.0, gamma=0.01, alpha=2.0, umax=1e6,
-                                  factor={'PAH0':1.0,'PAH1':1.0,'SamC':5.0,'LamC':1.0,'aSil':1.0})
-#    grain_composition = dust.MC10(g0=1.0, gamma=0.01)
-    var_g0 = True
-    var_gamma = True
-    var_umax = False
-    var_alpha = False
-#    variables = {'PAH0': 1, 'PAH1': 1, 'SamC': 2, 'LamC': None, 'aSil': None}
-#    variables = {'PAH0': 1, 'PAH1': 1, 'SamC': 1, 'LamC': 2, 'aSil': 2}
-    variables = {'PAH0': 1, 'PAH1': 1, 'SamC': 2, 'LamC': 3, 'aSil': 3}
-
-    newgc = fitting_mass(bands, values, grain_composition, cache, var_g0, var_gamma, var_umax, var_alpha,
-                         variables=variables, absolute=True)
-
-#    x, y = run.calc_sed(newgc, cache=cache)
-#    np.savetxt('test.dat', np.transpose(np.array([x, y])))https://github.com/dpforest/pydustem
-
-    res = run.calc_sed(newgc, cache=cache, readraw=True)
-    np.savetxt('test.dat', np.transpose(np.vstack((res['lambda'], res['PAH0']+res['PAH1'], res['SamC'], res['LamC']+res['aSil'], res['Total']))))

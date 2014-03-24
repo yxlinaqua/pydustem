@@ -29,9 +29,6 @@ def calc_sed(gc, du=0.5, msg=None, silent=True, readraw=False, cache=None):
     gclist = [gc.dup(g0=i, gamma=0.0) for i in ulist]
 
     if cache is None:
-        # マルチスレッド化はdustemの出力先を可変にできないと難しい…
-        # p = multiprocessing.Pool(2)
-        # res = p.map(calc_sed, gclist)
         jlist = map(calc_single_sed, gclist)
     else:
         jlist = []
@@ -80,8 +77,6 @@ def integ_sed_gamma(gc, ulist, jlist):
         res['Total'] += res[k]
 
     return res
-
-def calc_ext(): pass
 
 def read_output(filename, skiprows=0, xcol=0, ycol=-1, unpack=True, reverse=False):
     x, y =  np.loadtxt(filename, skiprows=skiprows, usecols=(xcol,ycol), unpack=unpack)
