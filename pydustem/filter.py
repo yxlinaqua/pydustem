@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+'''functions for filter convolution'''
 
 import os
 import numpy as np
@@ -6,6 +7,7 @@ from scipy import interpolate
 from config import FILTER_DIR, FILTER_PATH
 
 def response_curve(filter_name, dtype='array', unpack=True, **kwargs):
+    '''Get a response curve of a filter'''
     ary = np.loadtxt(get_path(filter_name))
     if dtype == 'spline':
         return interpolate.splrep(ary[:,0], ary[:,1], **kwargs)
@@ -19,7 +21,7 @@ def response_curve(filter_name, dtype='array', unpack=True, **kwargs):
         raise TypeError, 'Returned type should be "spline" or "array".'
     
 def get_path(filter_name):
-    ''' Get the filter path'''
+    '''Get a filter path'''
     return os.path.join(FILTER_DIR,FILTER_PATH[filter_name])
 
 def weighted_mean(filter_list, x, y):

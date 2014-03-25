@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+'''functions for fitting dust mass'''
 
 from math import log10
 import numpy as np
@@ -7,6 +8,7 @@ import scipy.interpolate
 import run
 
 def counter(start=1):
+    '''counter for repeatedly-executed DustEM'''
     i = start
     while True:
         yield i
@@ -15,6 +17,7 @@ def counter(start=1):
 def fitting_mass(bands, values, grain_composition, cache,
                  var_g0=True, var_gamma=False, var_umax=False, var_alpha=False,
                  variables=None, absolute=True, approx_g0=True):
+    '''fitting dust mass (and other parameters) using scipy.optimize.fmin_slsqp'''
     if len(bands) != len(values): raise ValueError
     if not absolute and None not in variables.values():
         raise ValueError, "Need value 'None' for at least one dust component when calculating relative abundances."
@@ -101,6 +104,7 @@ def fitting_mass(bands, values, grain_composition, cache,
 def display_fitting_result(): pass
 
 def adjust_sed(bands, x, y):
+    '''calculate averaged/interpolated intensity'''
     if isinstance(bands[0], str):
         return filter.weighted_mean(bands, x, y)
     else:

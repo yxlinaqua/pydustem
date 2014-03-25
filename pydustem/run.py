@@ -1,4 +1,5 @@
 #-*- coding: utf-8 -*-
+'''functions for running DustEM and calculating (combined) SED'''
 
 import os
 import sys
@@ -9,6 +10,7 @@ import numpy as np
 from config import RES_FILE, GRAIN, DUSTEM, RES_HEADER
 
 def run_dustem(grain_composition, output='SED', msg=None, silent=True):
+    '''run DustEM'''
     if not msg: msg = 'running DUSTEM...'
     grain_composition.correct_params()
     grain_composition.savefile(GRAIN)
@@ -19,6 +21,7 @@ def run_dustem(grain_composition, output='SED', msg=None, silent=True):
         os.system(DUSTEM)
 
 def calc_sed(gc, du=0.5, msg=None, silent=True, readraw=False, cache=None):
+    '''calculate a SED considering distribution of stellar intensity'''
     if gc.gamma:
         # ulist = [g0, 10**(k_1), ..., 10**(k_n), umax]
         ulist = 10**np.arange(int(log10(gc.g0)), int(log10(gc.umax))+1, du)
@@ -46,6 +49,7 @@ def calc_sed(gc, du=0.5, msg=None, silent=True, readraw=False, cache=None):
     return res if readraw else (res['lambda'], res['Total'])
 
 def calc_single_sed(gc, msg=None, silent=True, readraw=True):
+    '''calculate a SED'''
     run_dustem(gc, output='SED', msg=msg, silent=silent)
     ary = read_output_raw(RES_FILE, skiprows=RES_HEADER, unpack=True)
     ylist = ['lambda'] + gc.grains.keys() + ['Total']
@@ -54,12 +58,14 @@ def calc_single_sed(gc, msg=None, silent=True, readraw=True):
     return res if readraw else (res['lambda'], res['Total'])
 
 def calc_sed_from_cache(grain_composition, cache):
+    '''calculate a SED from cache'''
     res = copy.deepcopy(cache['%E'%grain_composition.g0])
     for k in grain_composition.grains.keys():
         res[k] *= grain_composition.grains[k].mass
     return res
 
 def integ_sed_gamma(gc, ulist, jlist):
+    '''integrate SEDs considering distribution of stellar intensity'''
     res = OrderedDict({'lambda': jlist[0]['lambda']})
     res['Total'] = np.zeros(jlist[0]['lambda'].shape)
     for k in gc.grains.keys():
@@ -79,6 +85,7 @@ def integ_sed_gamma(gc, ulist, jlist):
     return res
 
 def read_output(filename, skiprows=0, xcol=0, ycol=-1, unpack=True, reverse=False):
+    '''read lines of wavelength and total intensity in the output file'''
     x, y =  np.loadtxt(filename, skiprows=skiprows, usecols=(xcol,ycol), unpack=unpack)
     if reverse:
         x = x[::-1]
@@ -86,5 +93,6 @@ def read_output(filename, skiprows=0, xcol=0, ycol=-1, unpack=True, reverse=Fals
     return (x,y)
 
 def read_output_raw(filename, skiprows=0, unpack=False):
+    '''read all columns in the DustEM output file'''
     return np.loadtxt(filename, skiprows=skiprows, unpack=unpack)
 
